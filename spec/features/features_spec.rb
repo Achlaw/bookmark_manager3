@@ -14,13 +14,29 @@ end
 feature 'Creating tags' do
   scenario 'I can add tags to a url' do
     DatabaseCleaner.start
-    visit 'links/new'
+    visit '/links/new'
     fill_in 'title', with: 'makers'
     fill_in 'url', with: 'makersacademy.com'
-    fill_in 'tag', with: 'search engine'
-            save_and_open_page
+    fill_in 'tags', with: 'search_engine'
     click_button 'new link'
-    expect(page).to have_content 'search engine'
+    link = Link.first
+                save_and_open_page
+    # expect(page).to have_content 'search engine'
+    expect(link.tags.map(&:name)).to include ('search_engine')
     DatabaseCleaner.clean
+  end
+
+  feature 'Viewing tags' do
+    scenario 'I can filter by tags' do
+      DatabaseCleaner.start
+      visit '/links/new'
+      fill_in 'title', with: 'makers'
+      fill_in 'url', with: 'makersacademy.com'
+      fill_in 'tags', with: 'search_engine'
+      click_button 'new link'
+      visit '/links/search_engine'
+      expect(page).to have_content 'makersacademy.com'
+      DatabaseCleaner.clean
+    end
   end
 end
