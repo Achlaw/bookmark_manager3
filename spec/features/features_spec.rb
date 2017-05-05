@@ -25,6 +25,17 @@ feature 'Creating tags' do
     expect(link.tags.map(&:name)).to include ('search_engine')
     DatabaseCleaner.clean
   end
+  scenario 'I can add multiple tags and view through multiple filters' do
+    visit '/links/new'
+    fill_in 'title', with: 'makers'
+    fill_in 'url', with: 'makersacademy.com'
+    fill_in 'tags', with: 'search_engine, education, sports'
+    visit 'links/search_engine'
+    expect(page).to have_content 'makersacademy.com'
+    visit 'links/education'
+    expect(page).to have_content 'makersacademy.com'
+    click_button 'new link'
+  end
 
   feature 'Viewing tags' do
     scenario 'I can filter by tags' do
